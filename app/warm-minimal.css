@@ -1,0 +1,375 @@
+
+:root {
+  --warm-bg: #F6F3EE;
+  --warm-sidebar: #EAE5DC;
+  --warm-card: #FFFFFF;
+  --warm-message: #E8E2D9;
+  --warm-text: #292524;
+  --warm-muted: #78716C;
+  --warm-border: #DDD6CC;
+}
+
+body {
+  background: var(--warm-bg);
+  color: var(--warm-text);
+}
+
+.warm-dashboard {
+  background: var(--warm-bg);
+  color: var(--warm-text);
+  min-height: 100vh;
+}
+
+.warm-dashboard aside {
+  background: var(--warm-sidebar) !important;
+  color: var(--warm-text);
+}
+
+.warm-dashboard section {
+  background: var(--warm-card) !important;
+  color: var(--warm-text);
+}
+
+.warm-dashboard h1,
+.warm-dashboard h2,
+.warm-dashboard h3,
+.warm-dashboard p {
+  color: var(--warm-text);
+}
+
+.warm-dashboard input,
+.warm-dashboard textarea {
+  background: #FFFFFF;
+  color: var(--warm-text);
+  border: 1px solid var(--warm-border);
+}
+
+.warm-dashboard input::placeholder,
+.warm-dashboard textarea::placeholder {
+  color: var(--warm-muted);
+}
+/* Warm Minimal – beszélgetések és gombok */
+
+.warm-dashboard button {
+  background: #292524 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #44403C !important;
+  border-radius: 10px;
+}
+
+.warm-dashboard button:hover {
+  background: #44403C !important;
+}
+
+.warm-dashboard [role="log"] > div {
+  background: #E8E2D9 !important;
+  color: #292524 !important;
+  border-radius: 14px;
+  line-height: 1.6;
+}
+
+.warm-dashboard textarea,
+.warm-dashboard input {
+  background: #FFFFFF !important;
+  color: #292524 !important;
+  border: 1px solid #DDD6CC !important;
+}
+
+.warm-dashboard textarea::placeholder,
+.warm-dashboard input::placeholder {
+  color: #78716C !important;
+}
+.warm-dashboard button {
+  background-color: #292524 !important;
+  color: #FFFFFF !important;
+}
+/* Beszélgetéslista szövege és ikonjai */
+.warm-dashboard aside button {
+  color: #292524 !important;
+}
+
+.warm-dashboard aside button[title="Átnevezés"],
+.warm-dashboard aside button[title="Törlés"] {
+  background: #E8E2D9 !important;
+  color: #57534E !important;
+  border: 1px solid #DDD6CC !important;
+}
+.warm-dashboard aside > button {
+  color: #FFFFFF !important;
+}
+/* Beszélgetések neveinek javítása */
+.warm-dashboard aside button[style*="transparent"] {
+  background: transparent !important;
+  color: #292524 !important;
+}
+
+/* Beszélgetéslista világos megjelenése */
+.warm-dashboard aside > div button {
+  background: transparent !important;
+  color: #292524 !important;
+}
+/* Beszélgetésnevek letisztult megjelenése */
+.warm-dashboard aside > div button:not([title]) {
+  background: transparent !important;
+  color: #292524 !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none;
+  text-align: left;
+}
+/* FlowPilot AI fejléc */
+.warm-dashboard header h1 {
+  color: #292524 !important;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+}
+
+/* Alcím */
+.warm-dashboard header p {
+  color: #78716C !important;
+}
+
+/* DEMO mód felirat */
+.warm-dashboard section > p {
+  color: #78716C !important;
+}
+/* Modern FlowPilot AI üzenetküldő */
+.warm-dashboard section form {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #DDD6CC;
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow: 0 4px 18px rgba(41, 37, 36, 0.06);
+}
+
+.warm-dashboard section form textarea {
+  flex: 1;
+  min-width: 0;
+  width: auto !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #292524 !important;
+  resize: none !important;
+  outline: none;
+}
+
+.warm-dashboard section form button[type="submit"] {
+  width: auto !important;
+  min-width: 54px;
+  margin-top: 0 !important;
+  padding: 12px 16px !important;
+  background: #292524 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 14px !important;
+  white-space: nowrap;
+}
+
+.warm-dashboard section form button[type="submit"]:hover {
+  background: #44403C !important;
+}
+
+@media (max-width: 600px) {
+  .warm-dashboard section form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .warm-dashboard section form button[type="submit"] {
+    width: 100% !important;
+  }
+}
+/* Modern chatmező – egysoros elrendezés */
+.warm-dashboard section form {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.warm-dashboard section form textarea {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+.warm-dashboard section form button[type="submit"] {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  margin: 0 !important;
+  align-self: center !important;
+}
+/* AIVORA – MODERN DESIGN */
+
+.warm-dashboard {
+  background: #f5f3ef;
+  color: #292929;
+  font-family: Inter, Arial, sans-serif;
+}
+
+/* Oldalsáv */
+.warm-dashboard aside {
+  background: #ebe8e2 !important;
+  border-right: 1px solid #e0dcd5 !important;
+  padding: 22px !important;
+}
+
+/* Beszélgetésfelület */
+.warm-dashboard main {
+  background: #ffffff !important;
+}
+
+/* Gombok */
+.warm-dashboard button {
+  border-radius: 12px !important;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.warm-dashboard button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Üzenetmező */
+.warm-dashboard textarea {
+  border-radius: 16px !important;
+  border: 1px solid #e2dfda !important;
+  background: #faf9f7 !important;
+  color: #292929 !important;
+  padding: 16px !important;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.warm-dashboard textarea:focus {
+  border-color: #a7a29a !important;
+}
+
+/* Finom animáció */
+@keyframes aivoraFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.warm-dashboard {
+  animation: aivoraFadeIn 0.35s ease-out;
+}
+/* AIVORA – MODERN SIDEBAR */
+
+.warm-dashboard aside {
+  background: #ebe8e2 !important;
+  border: 1px solid #e2ded7 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.035);
+}
+
+/* Beszélgetések gombjai */
+.warm-dashboard aside button {
+  border-radius: 12px !important;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.warm-dashboard aside button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+}
+
+/* Szebb beszélgetéslista */
+.warm-dashboard aside h3 {
+  color: #57534e !important;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+/* Aivora – telefonos Dashboard */
+
+.aivora-mobile-menu-button {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .warm-dashboard {
+    padding: 12px !important;
+    overflow-x: hidden;
+  }
+
+  .warm-dashboard > div {
+    width: 100% !important;
+    min-width: 0;
+  }
+
+  .aivora-mobile-menu-button {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin: 14px 0;
+    border: none;
+    border-radius: 12px;
+    background: #292524;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .warm-dashboard > div > div:has(> .aivora-sidebar) {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .aivora-sidebar {
+    display: none;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .aivora-sidebar.mobile-open {
+    display: block;
+  }
+
+  .aivora-chat {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 14px !important;
+    box-sizing: border-box;
+  }
+
+  .aivora-chat h2 {
+    overflow-wrap: anywhere;
+  }
+
+  .aivora-chat [role="log"] {
+    min-height: 300px;
+    max-height: 60vh !important;
+  }
+
+  .aivora-chat [role="log"] > div {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .aivora-chat textarea {
+    font-size: 16px !important;
+  }
+}

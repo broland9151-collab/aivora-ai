@@ -1,0 +1,251 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --bg: #090d18;
+  --panel: #111827;
+  --border: #263248;
+  --text: #f5f7ff;
+  --muted: #9aa7bd;
+  --accent: #a78bfa;
+  --accent2: #7c3aed;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at 50% 0%, #25204a 0%, transparent 55%), var(--bg);
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.page {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.nav {
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ffffff12;
+}
+
+.logo {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.logo-icon {
+  color: var(--accent);
+  margin-right: 7px;
+}
+
+.language, .secondary {
+  background: #171e30;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 11px 15px;
+  border-radius: 10px;
+}
+
+.hero {
+  text-align: center;
+  padding: 78px 0 48px;
+}
+
+.badge {
+  display: inline-block;
+  color: #d8ccff;
+  background: #8b5cf620;
+  border: 1px solid #8b5cf64d;
+  padding: 8px 13px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hero h1 {
+  max-width: 800px;
+  margin: 23px auto 15px;
+  font-size: clamp(36px, 5.5vw, 64px);
+  line-height: 1.08;
+  letter-spacing: -2.8px;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  padding-bottom: 65px;
+}
+
+.panel {
+  min-width: 0;
+  padding: 26px;
+  background: #111827e8;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px #00000020;
+}
+
+.panel label, .output-label {
+  display: block;
+  color: #e4e9f5;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.panel input, .panel select, .panel textarea {
+  width: 100%;
+  color: var(--text);
+  background: #0b1120;
+  border: 1px solid #303c52;
+  border-radius: 10px;
+  padding: 13px 14px;
+  margin-bottom: 22px;
+  outline: none;
+}
+
+.panel input:focus, .panel select:focus, .panel textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px #a78bfa20;
+}
+
+.panel textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.panel input::placeholder, .panel textarea::placeholder {
+  color: #718099;
+}
+
+.primary {
+  width: 100%;
+  padding: 15px 18px;
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(100deg, var(--accent2), #8b5cf6);
+  border: 0;
+  border-radius: 10px;
+  transition: opacity 0.2s;
+}
+
+.primary:hover {
+  opacity: 0.9;
+}
+
+.primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.demo-note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 17px 0 0;
+}
+
+.output {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  flex: 1;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.7;
+}
+
+.empty-icon {
+  font-size: 42px;
+  color: var(--accent);
+}
+
+.output pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #dce4f5;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.9;
+  flex: 1;
+}
+
+.secondary {
+  align-self: flex-start;
+  margin-top: 16px;
+}
+
+footer {
+  text-align: center;
+  padding: 25px 0 40px;
+  color: #8290a9;
+  font-size: 12px;
+  border-top: 1px solid #ffffff12;
+}
+
+@media (max-width: 720px) {
+  .page {
+    width: min(100% - 24px, 520px);
+  }
+
+  .nav {
+    height: 72px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .hero {
+    padding: 55px 0 32px;
+  }
+
+  .hero h1 {
+    letter-spacing: -1.5px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 20px;
+  }
+}
