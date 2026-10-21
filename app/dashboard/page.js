@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [openingPortal, setOpeningPortal] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [remaining, setRemaining] = useState(null);
@@ -377,6 +378,43 @@ async function deleteConversation(id) {
   setDeletingId(null);
   setEditingId(null);
 }
+async function openBillingPortal() {
+  if (openingPortal) return;
+
+  setOpeningPortal(true);
+  setError("");
+
+  try {
+    const { data, error: sessionError } =
+      await supabase.auth.getSession();
+
+    if (sessionError || !data.session?.access_token) {
+      router.replace("/login");
+      return;
+    }
+
+    const response = await fetch("/api/billing/portal", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${data.session.access_token}`,
+      },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.url) {
+      throw new Error(
+        result.error || "Nem sikerült megnyitni az előfizetéskezelőt."
+      );
+    }
+
+    window.location.assign(result.url);
+  } catch (err) {
+    setError(err.message || "Ismeretlen hiba történt.");
+  } finally {
+    setOpeningPortal(false);
+  }
+}
   async function logout() {
     await supabase.auth.signOut();
     router.replace("/login");
@@ -601,6 +639,28 @@ async function deleteConversation(id) {
   >
     Pro-ra váltás – 2 990 Ft/hó
   </a>
+)}
+{plan === "pro" && (
+  <button
+    type="button"
+    onClick={openBillingPortal}
+    disabled={openingPortal}
+    style={{
+      width: "100%",
+      marginTop: 12,
+      padding: "12px",
+      background: "#292524",
+      color: "#ffffff",
+      border: "none",
+      borderRadius: 10,
+      fontWeight: 600,
+      cursor: openingPortal ? "wait" : "pointer",
+    }}
+  >
+    {openingPortal
+      ? "Megnyitás..."
+      : "Előfizetés kezelése"}
+  </button>
 )}
 </div>
             <button
