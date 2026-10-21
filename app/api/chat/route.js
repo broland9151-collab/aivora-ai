@@ -1,3 +1,4 @@
+
 import OpenAI from "openai";
 import { createClient } from "@supabase/supabase-js";
 
@@ -24,13 +25,10 @@ export async function POST(request) {
 
     const token = authorization.slice(7);
 
-    // Vercel környezeti változók
+    // Környezeti változók
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const publicKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    // JAVÍTVA: a Vercelben használt változónév
     const secretKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
     const openaiKey = process.env.OPENAI_API_KEY;
 
     if (!url || !publicKey || !secretKey) {
@@ -121,7 +119,9 @@ export async function POST(request) {
       );
 
       return Response.json(
-        { error: "Nem sikerült ellenőrizni a beszélgetést." },
+        {
+          error: "Nem sikerült ellenőrizni a beszélgetést."
+        },
         { status: 500 }
       );
     }
@@ -159,7 +159,9 @@ export async function POST(request) {
         );
 
         return Response.json(
-          { error: "Az AI-választ nem sikerült elmenteni." },
+          {
+            error: "Az AI-választ nem sikerült elmenteni."
+          },
           { status: 500 }
         );
       }
@@ -180,49 +182,8 @@ export async function POST(request) {
       );
     }
 
-    // 7. Napi AI-keret ellenőrzése
-    const {
-      data: quotaData,
-      error: quotaError
-    } = await admin.rpc(
-      "consume_combined_ai_quota",
-      { p_user_id: userId }
-    );
-
-    if (
-      quotaError ||
-      !Array.isArray(quotaData) ||
-      quotaData.length !== 1
-    ) {
-      console.error(
-        "Keretellenőrzési hiba:",
-        quotaError
-      );
-
-      return Response.json(
-        { error: "Nem sikerült ellenőrizni a napi keretet." },
-        { status: 500 }
-      );
-    }
-
-    const quota = quotaData[0];
-
-    if (!quota.allowed) {
-      const globalLimit = quota.reason === "global_limit";
-
-      return Response.json(
-        {
-          error: globalLimit
-            ? "Az Aivora AI elérte a mai közös AI-kéréskeretet. Próbáld újra holnap!"
-            : "Elérted a napi AI-kéréses limitedet. Próbáld újra holnap!",
-          remaining: 0,
-          reason: quota.reason
-        },
-        { status: 429 }
-      );
-    }
-
-    // 8. Beszélgetési memória
+    // 7. Beszélgetési memória betöltése
+    // FONTOS: ez a napi keret fogyasztása előtt történik.
     const {
       data: history,
       error: historyError
@@ -269,6 +230,51 @@ export async function POST(request) {
       }
     ];
 
+    // 8. Napi AI-keret ellenőrzése
+    // A meglévő Free, Pro és közös limitek változatlanok.
+    const {
+      data: quotaData,
+      error: quotaError
+    } = await admin.rpc(
+      "consume_combined_ai_quota",
+      { p_user_id: userId }
+    );
+
+    if (
+      quotaError ||
+      !Array.isArray(quotaData) ||
+      quotaData.length !== 1
+    ) {
+      console.error(
+        "Keretellenőrzési hiba:",
+        quotaError
+      );
+
+      return Response.json(
+        {
+          error: "Nem sikerült ellenőrizni a napi keretet."
+        },
+        { status: 500 }
+      );
+    }
+
+    const quota = quotaData[0];
+
+    if (!quota.allowed) {
+      const globalLimit = quota.reason === "global_limit";
+
+      return Response.json(
+        {
+          error: globalLimit
+            ? "Az Aivora AI elérte a mai közös AI-kéréskeretet. Próbáld újra holnap!"
+            : "Elérted a napi AI-kéréses limitedet. Próbáld újra holnap!",
+          remaining: 0,
+          reason: quota.reason
+        },
+        { status: 429 }
+      );
+    }
+
     // 9. OpenAI-válasz generálása
     const openai = new OpenAI({
       apiKey: openaiKey
@@ -314,28 +320,35 @@ export async function POST(request) {
       );
 
       return Response.json(
-        { error: "Az AI-választ nem sikerült elmenteni." },
+        {
+          error: "Az AI-választ nem sikerült elmenteni."
+        },
         { status: 500 }
       );
     }
 
-   const { data: dailyLimit, error: limitError } =
-  await admin.rpc("get_ai_daily_limit", {
-    p_user_id: userId
-  });
+    // 11. Fennmaradó napi keret lekérdezése
+    const {
+      data: dailyLimit,
+      error: limitError
+    } = await admin.rpc("get_ai_daily_limit", {
+      p_user_id: userId
+    });
 
-if (limitError) {
-  console.error("Napi limit lekérdezési hiba:", limitError);
-}
+    if (limitError) {
+      console.error(
+        "Napi limit lekérdezési hiba:",
+        limitError
+      );
+    }
 
-return Response.json({
-  reply: aiReply,
-  remaining: Math.max(
-    0,
-    (dailyLimit ?? 10) - quota.used_count
-  )
-});
- 
+    return Response.json({
+      reply: aiReply,
+      remaining: Math.max(
+        0,
+        (dailyLimit ?? 10) - quota.used_count
+      )
+    });
 
   } catch (error) {
     console.error("AIVORA RÉSZLETES HIBA:", error);
