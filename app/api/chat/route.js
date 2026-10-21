@@ -319,13 +319,23 @@ export async function POST(request) {
       );
     }
 
-    return Response.json({
-      reply: aiReply,
-      remaining: Math.max(
-        0,
-        10 - quota.used_count
-      )
-    });
+   const { data: dailyLimit, error: limitError } =
+  await admin.rpc("get_ai_daily_limit", {
+    p_user_id: userId
+  });
+
+if (limitError) {
+  console.error("Napi limit lekérdezési hiba:", limitError);
+}
+
+return Response.json({
+  reply: aiReply,
+  remaining: Math.max(
+    0,
+    (dailyLimit ?? 10) - quota.used_count
+  )
+});
+ 
 
   } catch (error) {
     console.error("AIVORA RÉSZLETES HIBA:", error);

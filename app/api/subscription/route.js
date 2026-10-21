@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
+
+
 export async function GET(request) {
   try {
     const token = request.headers
@@ -72,7 +74,11 @@ export async function GET(request) {
         dailyLimit - usedToday
       )
     });
-  } catch (error) {
+   } catch (error) {
+    if (error?.digest === "NEXT_PRERENDER_INTERRUPTED") {
+      throw error;
+    }
+
     console.error("Subscription API hiba:", error);
 
     return Response.json(
