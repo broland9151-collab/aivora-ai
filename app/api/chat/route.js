@@ -1,6 +1,6 @@
-
 import OpenAI from "openai";
 import { createClient } from "@supabase/supabase-js";
+import { randomUUID } from "node:crypto";
 
 const DEMO_MODE = process.env.DEMO_MODE === "true";
 
@@ -12,6 +12,12 @@ export async function GET() {
 }
 
 export async function POST(request) {
+  let requestId = null;
+  let quotaReserved = false;
+  let openaiAttempted = false;
+  let userId = null;
+  let admin = null;
+
   try {
     // 1. Bejelentkezés ellenőrzése
     const authorization = request.headers.get("authorization");
@@ -61,7 +67,7 @@ export async function POST(request) {
       );
     }
 
-    const userId = data.user.id;
+    userId = data.user.id;
 
     // 2. Üzenet ellenőrzése
     const body = await request.json().catch(() => null);
@@ -94,7 +100,7 @@ export async function POST(request) {
     }
 
     // 3. Szerveroldali Supabase kliens
-    const admin = createClient(url, secretKey, {
+    admin = createClient(url, secretKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false
@@ -183,7 +189,7 @@ export async function POST(request) {
     }
 
     // 7. Beszélgetési memória betöltése
-    // FONTOS: ez a napi keret fogyasztása előtt történik.
+    // A napi keret fogyasztása előtt történik.
     const {
       data: history,
       error: historyError
@@ -230,14 +236,20 @@ export async function POST(request) {
       }
     ];
 
+    // Egyedi azonosító az AI-kéréshez
+    requestId = randomUUID();
+
     // 8. Napi AI-keret ellenőrzése
-    // A meglévő Free, Pro és közös limitek változatlanok.
+    // A Free, Pro és közös limitek változatlanok.
     const {
       data: quotaData,
       error: quotaError
     } = await admin.rpc(
-      "consume_combined_ai_quota",
-      { p_user_id: userId }
+      "reserve_combined_ai_quota",
+      {
+        p_user_id: userId,
+        p_request_id: requestId
+      }
     );
 
     if (
@@ -275,10 +287,16 @@ export async function POST(request) {
       );
     }
 
+    // A napi AI-keret sikeresen lefoglalva
+    quotaReserved = true;
+
     // 9. OpenAI-válasz generálása
     const openai = new OpenAI({
       apiKey: openaiKey
     });
+
+    // Innentől az API-hívásnak lehet költsége.
+    openaiAttempted = true;
 
     const response = await openai.responses.create({
       model: "gpt-4.1-mini",
@@ -296,6 +314,24 @@ export async function POST(request) {
 
     if (!aiReply) {
       console.error("Az OpenAI üres választ adott.");
+
+      // Az API-hívás megtörtént, a foglalást lezárjuk.
+      const {
+        data: emptyCompleted,
+        error: emptyCompleteError
+      } = await admin.rpc("complete_ai_request", {
+        p_request_id: requestId,
+        p_user_id: userId
+      });
+
+      if (emptyCompleteError || emptyCompleted !== true) {
+        console.error(
+          "Üres AI-kérés lezárási hiba:",
+          emptyCompleteError
+        );
+      } else {
+        quotaReserved = false;
+      }
 
       return Response.json(
         { error: "Az AI nem adott választ." },
@@ -319,6 +355,27 @@ export async function POST(request) {
         saveError
       );
 
+      // A válasz elkészült, a foglalást lezárjuk.
+      const {
+        data: saveFailedCompleted,
+        error: saveFailedCompleteError
+      } = await admin.rpc("complete_ai_request", {
+        p_request_id: requestId,
+        p_user_id: userId
+      });
+
+      if (
+        saveFailedCompleteError ||
+        saveFailedCompleted !== true
+      ) {
+        console.error(
+          "Mentési hiba utáni lezárási hiba:",
+          saveFailedCompleteError
+        );
+      } else {
+        quotaReserved = false;
+      }
+
       return Response.json(
         {
           error: "Az AI-választ nem sikerült elmenteni."
@@ -326,6 +383,33 @@ export async function POST(request) {
         { status: 500 }
       );
     }
+
+    // Sikeres AI-kérés lezárása
+    const {
+      data: completed,
+      error: completeError
+    } = await admin.rpc("complete_ai_request", {
+      p_request_id: requestId,
+      p_user_id: userId
+    });
+
+    if (completeError || completed !== true) {
+      console.error(
+        "AI-kérés lezárási hiba:",
+        completeError
+      );
+
+      return Response.json(
+        {
+          error: "Az AI-válasz elkészült, de a kérés lezárása sikertelen.",
+          reply: aiReply
+        },
+        { status: 500 }
+      );
+    }
+
+    // A kérés sikeresen lezárva
+    quotaReserved = false;
 
     // 11. Fennmaradó napi keret lekérdezése
     const {
@@ -351,6 +435,70 @@ export async function POST(request) {
     });
 
   } catch (error) {
+    // Ha az OpenAI-hívás még nem kezdődött el,
+    // a lefoglalt napi keretet visszatérítjük.
+    if (
+      quotaReserved &&
+      !openaiAttempted &&
+      admin &&
+      userId &&
+      requestId
+    ) {
+      try {
+        const { data: refunded, error: refundError } =
+          await admin.rpc("refund_ai_quota", {
+            p_request_id: requestId,
+            p_user_id: userId
+          });
+
+        if (refundError || refunded !== true) {
+          console.error(
+            "AI-keret visszatérítési hiba:",
+            refundError
+          );
+        } else {
+          quotaReserved = false;
+        }
+      } catch (refundException) {
+        console.error(
+          "Visszatérítés közben váratlan hiba történt:",
+          refundException
+        );
+      }
+    }
+
+    // Ha az OpenAI-hívást már megpróbáltuk,
+    // a foglalást lezárjuk, nem térítjük vissza.
+    if (
+      quotaReserved &&
+      openaiAttempted &&
+      admin &&
+      userId &&
+      requestId
+    ) {
+      try {
+        const { data: completed, error: completeError } =
+          await admin.rpc("complete_ai_request", {
+            p_request_id: requestId,
+            p_user_id: userId
+          });
+
+        if (completeError || completed !== true) {
+          console.error(
+            "Hibás AI-kérés lezárása sikertelen:",
+            completeError
+          );
+        } else {
+          quotaReserved = false;
+        }
+      } catch (completeException) {
+        console.error(
+          "AI-kérés lezárása közben hiba történt:",
+          completeException
+        );
+      }
+    }
+
     console.error("AIVORA RÉSZLETES HIBA:", error);
 
     console.error("HIBA ADATOK:", {
@@ -363,8 +511,7 @@ export async function POST(request) {
     return Response.json(
       {
         error: "Nem sikerült választ kérni az AI-tól.",
-        errorCode:
-          error?.status || error?.code || "unknown"
+        errorCode: error?.status || error?.code || "unknown"
       },
       { status: 500 }
     );
