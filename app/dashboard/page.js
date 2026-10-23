@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -217,8 +216,6 @@ export default function Dashboard() {
     let conversationId = activeId;
 
     try {
-      // JAVÍTÁS: az első üzenet automatikusan
-      // létrehozza a felhasználó beszélgetését.
       if (!conversationId) {
         const { data: newChat, error: createError } = await supabase
           .from("conversations")
@@ -319,8 +316,6 @@ export default function Dashboard() {
         (chat) => chat.id === conversationId
       );
 
-      // Újonnan létrehozott beszélgetésnél is
-      // az első kérdés lesz a beszélgetés címe.
       if (!current || current.title === "Új beszélgetés") {
         const newTitle = text.slice(0, 55);
 
@@ -651,377 +646,687 @@ export default function Dashboard() {
           font-weight: 800;
           letter-spacing: .6px;
         }
-        .av-muted {
-          color: var(--av-muted);
+          .av-muted {
+          color: #ac9bbb;
           font-size: 13px;
-          line-height: 1.5;
+          line-height: 1.6;
         }
+
         .av-count {
-          font-size: 34px;
+          font-size: 35px;
           font-weight: 800;
-          margin-top: 7px;
+          margin-top: 9px;
+          color: #fff;
         }
+
         .av-count small {
-          font-size: 17px;
-          color: #a9a6bf;
-          font-weight: 500;
+          font-size: 16px;
+          font-weight: 400;
+          color: #a99abc;
         }
+
         .av-progress {
           height: 8px;
-          background: #3a3551;
+          margin-top: 15px;
+          background: #302044;
           border-radius: 20px;
           overflow: hidden;
-          margin-top: 13px;
         }
+
         .av-progress > div {
           height: 100%;
           border-radius: 20px;
-          background: linear-gradient(90deg,#8963eb,#e06398);
-          transition: width .3s ease;
+          background: linear-gradient(90deg, #913dff, #e09cff);
+          box-shadow: 0 0 18px #b14dff;
         }
+
         .av-remaining {
           font-size: 12px;
-          color: #c0bdd2;
+          color: #bca9ce;
           margin: 12px 0 0;
         }
+
         .av-upgrade,
-        .av-portal {
+        .av-portal,
+        .av-new {
           display: block;
           width: 100%;
-          margin-top: 20px;
-          padding: 13px;
-          border: 0;
-          border-radius: 12px;
-          background: linear-gradient(120deg,#8156df,#a45cd5);
-          color: white;
+          border: 1px solid #a14bfa;
+          border-radius: 14px;
+          padding: 14px;
+          color: #fff;
           text-align: center;
           text-decoration: none;
           font-size: 13px;
           font-weight: 700;
+          background: linear-gradient(120deg, #7524d5, #b34bfa);
+          box-shadow: 0 0 22px #8e36ed35;
         }
-        .av-new {
-          width: 100%;
-          border: 1px solid #8b67d7;
-          border-radius: 13px;
-          padding: 15px;
-          color: white;
-          background: linear-gradient(135deg,#7550d1,#543597);
-          font-weight: 700;
+
+        .av-upgrade,
+        .av-portal {
+          margin-top: 19px;
         }
-        .av-new:hover { background: #8259dc; }
+
+        .av-new:hover,
+        .av-upgrade:hover,
+        .av-portal:hover {
+          filter: brightness(1.16);
+          box-shadow: 0 0 28px #9f48fa65;
+        }
+
         .av-list-label {
           display: flex;
-          align-items: center;
           justify-content: space-between;
-          color: #e5e0f8;
+          align-items: center;
+          padding: 10px 3px 0;
           font-size: 13px;
           font-weight: 700;
-          padding: 9px 3px 0;
+          color: #e9d8ff;
         }
+
         .av-list-label span:last-child {
-          color: #a5a0bc;
-          font-size: 12px;
+          color: #9b82b6;
         }
+
         .av-list {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 9px;
           overflow-y: auto;
-          max-height: 480px;
+          max-height: 460px;
         }
+
         .av-conversation {
-          border: 1px solid #303349;
-          background: #1c2030;
-          border-radius: 12px;
           padding: 9px;
+          border: 1px solid #38224f;
+          border-radius: 13px;
+          background: #130c21;
           min-width: 0;
         }
+
         .av-conversation.active {
-          border-color: #8264c7;
-          background: #29233e;
-          box-shadow: inset 3px 0 #d55e87;
+          border-color: #a24bff;
+          background: #241036;
+          box-shadow: inset 3px 0 #b55aff;
         }
+
         .av-chat-row {
           display: flex;
           align-items: center;
           gap: 5px;
         }
+
         .av-chat-title {
           flex: 1;
           min-width: 0;
-          text-align: left;
+          padding: 9px 5px;
           border: 0;
           background: transparent;
-          color: #e6e3f6;
+          color: #eee2ff;
+          text-align: left;
           font-size: 13px;
-          padding: 7px 4px;
           overflow-wrap: anywhere;
         }
+
         .av-icon-button {
           flex-shrink: 0;
-          border: 0;
-          border-radius: 7px;
-          background: #32344a;
-          color: #c5c2d8;
-          padding: 6px 8px;
-          font-size: 14px;
+          padding: 7px 9px;
+          border: 1px solid #51316a;
+          border-radius: 8px;
+          background: #261537;
+          color: #d6b4f4;
         }
-        .av-icon-button:hover { background: #48445f; }
+
+        .av-icon-button:hover {
+          background: #43215d;
+        }
+
         .av-edit-input {
           width: 100%;
-          background: #111526;
-          color: white;
-          border: 1px solid #8767c7;
-          border-radius: 8px;
-          padding: 10px;
+          padding: 11px;
+          border: 1px solid #9852ed;
+          border-radius: 9px;
+          background: #0c0715;
+          color: #fff;
         }
+
         .av-small-actions {
           display: flex;
           gap: 8px;
           margin-top: 9px;
         }
+
         .av-small-actions button {
-          border: 1px solid #4d4b68;
-          background: #34314d;
-          color: white;
-          border-radius: 8px;
-          padding: 8px 10px;
+          padding: 9px 11px;
+          border: 1px solid #66427e;
+          border-radius: 9px;
+          background: #321d48;
+          color: #fff;
           font-size: 12px;
         }
+
         .av-small-actions .av-danger {
-          background: #4b2534;
-          border-color: #8f3c53;
-          color: #ffb7c5;
+          background: #4b1934;
+          border-color: #a83d68;
+          color: #ffbdd5;
         }
+
         .av-error {
           padding: 12px;
-          border: 1px solid #9a405a;
-          background: #421e30;
-          color: #ffd2da;
-          border-radius: 10px;
+          border: 1px solid #b3457d;
+          border-radius: 11px;
+          background: #3a122d;
+          color: #ffd4e6;
           font-size: 13px;
           overflow-wrap: anywhere;
         }
+
         .av-chat {
+          position: relative;
           display: flex;
           flex-direction: column;
           min-width: 0;
-          min-height: 690px;
-          background: rgba(21,24,39,.96);
-          border: 1px solid var(--av-border);
-          border-radius: 22px;
+          min-height: 700px;
           overflow: hidden;
+          border: 1px solid #492267;
+          border-radius: 25px;
+          background: linear-gradient(145deg, #11091e, #090610);
+          box-shadow: 0 0 55px #7e27d018;
         }
+
         .av-chat-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 23px 26px;
-          border-bottom: 1px solid var(--av-border);
           gap: 14px;
+          padding: 23px 27px;
+          border-bottom: 1px solid #38204f;
+          background: #110a1d;
         }
+
         .av-chat-header h2 {
           margin: 0 0 9px;
+          color: #fff;
           font-size: 19px;
-          font-weight: 700;
+          font-weight: 800;
           overflow-wrap: anywhere;
         }
+
         .av-online {
-          color: #b6a2ec;
+          color: #b99bd6;
           font-size: 12px;
         }
+
         .av-online::before {
           content: "";
           display: inline-block;
-          width: 7px;
-          height: 7px;
+          width: 8px;
+          height: 8px;
           margin-right: 8px;
           border-radius: 50%;
-          background: #ad87f1;
+          background: #bc65ff;
+          box-shadow: 0 0 12px #bc65ff;
         }
+
         .av-header-decoration {
           width: 12px;
           height: 12px;
-          border-radius: 50%;
-          background: #ee5b76;
-          box-shadow: 0 0 17px #ee5b7655;
           flex-shrink: 0;
+          border-radius: 50%;
+          background: #bd5aff;
+          box-shadow: 0 0 18px #b54dff;
         }
+
         .av-message-list {
           display: flex;
           flex-direction: column;
-          gap: 15px;
+          gap: 16px;
           flex: 1;
           min-height: 390px;
           max-height: 680px;
+          padding: 28px;
           overflow-y: auto;
-          padding: 26px;
         }
+
         .av-empty {
           width: 100%;
-          max-width: 700px;
+          max-width: 740px;
           margin: auto;
-          padding: 35px 0;
+          padding: 30px 0;
           text-align: center;
         }
+
         .av-empty-logo {
-          width: 76px;
-          height: 76px;
           display: grid;
           place-items: center;
-          margin: 0 auto 22px;
-          border: 1px solid #654a9d;
-          border-radius: 23px;
-          background: linear-gradient(145deg,#42326c,#251e41);
-          color: #d4bdff;
-          font-size: 42px;
-          box-shadow: 0 10px 45px #6c46b82c;
+          width: 94px;
+          height: 94px;
+          margin: 0 auto 25px;
+          border: 1px solid #a354ff;
+          border-radius: 28px;
+          background: radial-gradient(circle, #512182, #170b29);
+          color: #edcfff;
+          font-size: 49px;
+          box-shadow:
+            0 0 25px #a343ff55,
+            0 0 75px #872bff25;
         }
+
         .av-empty h2 {
-          font-size: clamp(23px,3vw,32px);
+          margin: 0 0 14px;
+          color: #fff;
+          font-size: clamp(25px, 3vw, 37px);
           letter-spacing: -1px;
-          margin: 0 0 12px;
         }
+
         .av-empty p {
-          color: #a7a9c1;
-          font-size: 14px;
-          line-height: 1.6;
-          margin: 0 auto 30px;
           max-width: 470px;
+          margin: 0 auto 30px;
+          color: #b2a0c7;
+          font-size: 14px;
+          line-height: 1.7;
         }
+
         .av-suggestions {
           display: grid;
-          grid-template-columns: repeat(2,minmax(0,1fr));
-          gap: 12px;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 13px;
           text-align: left;
         }
+
         .av-suggestion {
-          border: 1px solid #3c3b57;
-          background: #222538;
-          border-radius: 14px;
-          padding: 18px;
-          color: #ebe7f9;
-          font-weight: 600;
+          min-height: 90px;
+          padding: 19px;
+          border: 1px solid #69318d;
+          border-radius: 17px;
+          background: linear-gradient(145deg, #20102f, #130a20);
+          color: #f5eaff;
           font-size: 13px;
+          font-weight: 700;
           text-align: left;
+          box-shadow: inset 0 1px #ffffff08;
         }
+
         .av-suggestion:hover {
-          border-color: #a079ee;
-          background: #2c2947;
-          transform: translateY(-2px);
+          transform: translateY(-3px);
+          border-color: #bd65ff;
+          background: #301546;
+          box-shadow: 0 0 25px #a83fff35;
         }
+
         .av-suggestion span {
-          margin-right: 9px;
-          font-size: 18px;
+          margin-right: 10px;
+          font-size: 21px;
         }
+
         .av-bubble {
           max-width: 85%;
-          padding: 16px 19px;
-          border-radius: 16px;
-          line-height: 1.7;
+          padding: 17px 20px;
+          border-radius: 18px;
+          font-size: 14px;
+          line-height: 1.75;
           white-space: pre-wrap;
           overflow-wrap: anywhere;
-          font-size: 14px;
         }
+
         .av-bubble.user {
           align-self: flex-end;
-          background: linear-gradient(120deg,#6849b6,#50348f);
-          border: 1px solid #8a64d0;
+          border: 1px solid #bc68ff;
           border-bottom-right-radius: 5px;
-          color: white;
+          background: linear-gradient(135deg, #6725b3, #421477);
+          color: #fff;
+          box-shadow: 0 0 20px #9b42ff25;
         }
+
         .av-bubble.assistant {
           align-self: flex-start;
-          background: #202438;
-          border: 1px solid #343850;
+          border: 1px solid #4a2867;
           border-bottom-left-radius: 5px;
-          color: #f1f0fb;
+          background: #1a0e29;
+          color: #f1e8ff;
         }
+
         .av-thinking {
-          color: #b7a3eb;
+          color: #d1a2ff;
           font-size: 13px;
+          animation: av-pulse 1.5s ease-in-out infinite;
         }
+
+        @keyframes av-pulse {
+          50% { opacity: .4; }
+        }
+
         .av-compose-wrap {
-          padding: 18px 25px 24px;
-          border-top: 1px solid var(--av-border);
+          padding: 20px 25px 23px;
+          border-top: 1px solid #38204f;
+          background: #0e0818;
         }
+
         .av-compose {
           display: flex;
           align-items: flex-end;
           gap: 12px;
-          background: #1c2032;
-          border: 1px solid #3d3b59;
-          border-radius: 17px;
           padding: 10px;
+          border: 1px solid #8240b4;
+          border-radius: 19px;
+          background: #170d26;
+          box-shadow: 0 0 20px #9d3aff16;
         }
-        .av-compose:focus-within { border-color: #9b77f0; }
+
+        .av-compose:focus-within {
+          border-color: #c178ff;
+          box-shadow: 0 0 25px #b14cff40;
+        }
+
         .av-compose textarea {
           flex: 1;
           min-width: 0;
           width: 100%;
-          resize: vertical;
           min-height: 52px;
           max-height: 180px;
+          resize: vertical;
+          padding: 13px 10px;
           border: 0;
           outline: 0;
           background: transparent;
-          color: white;
-          padding: 13px 10px;
+          color: #fff;
           font-size: 14px;
         }
-        .av-compose textarea::placeholder { color: #8c91ab; }
+
+        .av-compose textarea::placeholder {
+          color: #9e87b7;
+        }
+
         .av-send {
           width: 49px;
           height: 49px;
           flex-shrink: 0;
           border: 0;
-          border-radius: 13px;
-          color: white;
-          background: linear-gradient(135deg,#9972f1,#d55b91);
-          font-size: 23px;
+          border-radius: 14px;
+          background: linear-gradient(135deg, #9638ef, #c66cff);
+          color: #fff;
+          font-size: 24px;
           font-weight: 800;
+          box-shadow: 0 0 20px #a63eff65;
         }
+
+        .av-send:hover:not(:disabled) {
+          filter: brightness(1.18);
+        }
+
         .av-footnote {
+          margin-top: 12px;
+          color: #89759e;
           font-size: 11px;
-          color: #8589a4;
           text-align: center;
-          margin-top: 11px;
         }
+
+        /* NEONLILA ALAPMEGJELENÉS */
+        .av-app {
+          --av-bg: #08050f;
+          --av-panel: #110a1c;
+          --av-border: #482463;
+          --av-text: #f8efff;
+          --av-muted: #ac9bbb;
+          --av-purple: #ba64ff;
+          --av-red: #d78cff;
+          background:
+            radial-gradient(circle at 85% 5%, #6924b02a, transparent 36%),
+            radial-gradient(circle at 5% 90%, #a034ef12, transparent 40%),
+            #08050f;
+          color: #f8efff;
+        }
+
+        .av-brand-icon {
+          background: linear-gradient(135deg, #ad4bff, #49138a);
+          box-shadow: 0 0 26px #9f42ff65;
+        }
+
+        .av-brand-name span {
+          color: #d28aff;
+        }
+
+        .av-logout {
+          border-color: #6b358f;
+          background: #1c0f2b;
+          color: #eacfff;
+        }
+
+        .av-logout:hover {
+          background: #35184c;
+        }
+
+        .av-sidebar {
+          border-color: #482463;
+          background: #100a1a;
+          box-shadow: 0 0 35px #7f2cbb12;
+        }
+
+        .av-plan-card {
+          border-color: #683595;
+          background: linear-gradient(145deg, #29143e, #140c23);
+        }
+
+        .av-pill {
+          background: #59238b;
+          color: #f3d9ff;
+        }
+
+        /* TABLET */
         @media (max-width: 900px) {
           .av-layout {
-            grid-template-columns: 260px minmax(0,1fr);
+            grid-template-columns: 260px minmax(0, 1fr);
           }
-          .av-sidebar { padding: 14px; }
-          .av-message-list { padding: 20px; }
+
+          .av-sidebar {
+            padding: 14px;
+          }
+
+          .av-message-list {
+            padding: 20px;
+          }
         }
+
+        /* MOBIL */
         @media (max-width: 720px) {
-          .av-app { padding: 12px; }
-          .av-topbar { padding: 8px 3px 17px; }
-          .av-brand-name { font-size: 23px; }
-          .av-email { display: none; }
+          .av-app {
+            padding: 12px;
+          }
+
+          .av-topbar {
+            padding: 7px 2px 16px;
+            gap: 10px;
+          }
+
+          .av-brand {
+            gap: 9px;
+          }
+
+          .av-brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 24px;
+          }
+
+          .av-brand-name {
+            font-size: 22px;
+          }
+
+          .av-subtitle {
+            font-size: 9px;
+            letter-spacing: .6px;
+          }
+
+          .av-email {
+            display: none;
+          }
+
+          .av-logout {
+            padding: 10px;
+            font-size: 11px;
+          }
+
           .av-mobile-toggle {
             display: block;
             width: 100%;
+            margin-bottom: 13px;
+            padding: 13px;
+            border: 1px solid #71399b;
+            border-radius: 13px;
+            background: #1d0e2e;
+            color: #eacfff;
+            font-weight: 700;
           }
-          .av-layout { display: block; }
+
+          .av-layout {
+            display: block;
+          }
+
+          .av-mobile-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 99;
+            border: 0;
+            background: #05020ac9;
+            backdrop-filter: blur(5px);
+          }
+
           .av-sidebar {
-            display: none;
-            margin-bottom: 14px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            width: min(86vw, 340px);
+            padding: 18px;
+            border-radius: 0 22px 22px 0;
+            overflow-y: auto;
+            transform: translateX(-110%);
+            visibility: hidden;
+            transition: transform .28s ease, visibility .28s;
+            box-shadow: 15px 0 65px #0009;
           }
-          .av-sidebar.mobile-open { display: flex; }
-          .av-chat { min-height: calc(100vh - 190px); }
-          .av-chat-header { padding: 18px; }
+
+          .av-sidebar.mobile-open {
+            transform: translateX(0);
+            visibility: visible;
+          }
+
+          .av-sidebar-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+          }
+
+          .av-sidebar-close {
+            padding: 9px 12px;
+            border: 1px solid #7740a1;
+            border-radius: 10px;
+            background: #29133e;
+            color: #fff;
+          }
+
+          .av-chat {
+            min-height: calc(100dvh - 165px);
+            border-radius: 18px;
+          }
+
+          .av-chat-header {
+            padding: 17px;
+          }
+
+          .av-chat-header h2 {
+            font-size: 17px;
+          }
+
           .av-message-list {
-            padding: 18px 14px;
-            min-height: 300px;
+            min-height: 310px;
+            padding: 17px 13px;
           }
-          .av-compose-wrap { padding: 12px; }
-          .av-suggestions { gap: 8px; }
+
+          .av-empty {
+            padding: 16px 0;
+          }
+
+          .av-empty-logo {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 20px;
+            border-radius: 22px;
+            font-size: 37px;
+          }
+
+          .av-empty h2 {
+            font-size: 24px;
+          }
+
+          .av-empty p {
+            margin-bottom: 22px;
+            font-size: 13px;
+          }
+
+          .av-suggestions {
+            gap: 9px;
+          }
+
           .av-suggestion {
-            padding: 12px;
+            min-height: 82px;
+            padding: 13px;
             font-size: 12px;
+            line-height: 1.5;
           }
-          .av-bubble { max-width: 94%; }
+
+          .av-suggestion span {
+            display: block;
+            margin: 0 0 7px;
+          }
+
+          .av-bubble {
+            max-width: 94%;
+            padding: 13px 15px;
+            font-size: 13px;
+          }
+
+          .av-compose-wrap {
+            padding: 12px;
+          }
+
+          .av-compose {
+            gap: 6px;
+            padding: 7px;
+          }
+
+          .av-compose textarea {
+            min-height: 48px;
+            padding: 12px 8px;
+            font-size: 16px;
+          }
+
+          .av-send {
+            width: 45px;
+            height: 45px;
+          }
+        }
+
+        @media (min-width: 721px) {
+          .av-mobile-backdrop,
+          .av-sidebar-head {
+            display: none;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .av-app *,
+          .av-app *::before,
+          .av-app *::after {
+            animation: none !important;
+            transition: none !important;
+          }
         }
       `}</style>
 
@@ -1029,12 +1334,14 @@ export default function Dashboard() {
         <header className="av-topbar">
           <div className="av-brand">
             <div className="av-brand-icon">✦</div>
+
             <div>
               <div className="av-brand-name">
                 Aivora<span>.</span> AI
               </div>
+
               <div className="av-subtitle">
-                Business Assistant
+                Your Intelligent Assistant
               </div>
             </div>
           </div>
@@ -1043,6 +1350,7 @@ export default function Dashboard() {
             <span className="av-email" title={user?.email}>
               {user?.email}
             </span>
+
             <button
               type="button"
               className="av-logout"
@@ -1058,21 +1366,44 @@ export default function Dashboard() {
           className="av-mobile-toggle"
           onClick={() => setMobileMenuOpen((open) => !open)}
           aria-expanded={mobileMenuOpen}
+          aria-controls="av-sidebar"
         >
-          {mobileMenuOpen
-            ? "✕ Menü bezárása"
-            : "☰ Beszélgetések"}
+          ☰ Beszélgetések
         </button>
+
+        {mobileMenuOpen && (
+          <button
+            type="button"
+            className="av-mobile-backdrop"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Mobilmenü bezárása"
+          />
+        )}
 
         <div className="av-layout">
           <aside
+            id="av-sidebar"
             className={`av-sidebar ${
               mobileMenuOpen ? "mobile-open" : ""
             }`}
           >
+            <div className="av-sidebar-head">
+              <strong>✦ Aivora AI</strong>
+
+              <button
+                type="button"
+                className="av-sidebar-close"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Menü bezárása"
+              >
+                ✕
+              </button>
+            </div>
+
             <div className="av-plan-card">
               <div className="av-plan-head">
                 <strong>✦ Aivora AI</strong>
+
                 <span className="av-pill">
                   {plan === "pro" ? "PRO" : "FREE"}
                 </span>
@@ -1179,6 +1510,7 @@ export default function Dashboard() {
                         <button type="submit">
                           Mentés
                         </button>
+
                         <button
                           type="button"
                           onClick={() => setEditingId(null)}
@@ -1204,6 +1536,7 @@ export default function Dashboard() {
                         >
                           Igen, törlés
                         </button>
+
                         <button
                           type="button"
                           onClick={() => setDeletingId(null)}
@@ -1266,10 +1599,12 @@ export default function Dashboard() {
                 <h2>
                   {currentChat?.title || "Új beszélgetés"}
                 </h2>
+
                 <div className="av-online">
                   Aivora AI · Üzleti asszisztens
                 </div>
               </div>
+
               <div
                 className="av-header-decoration"
                 aria-hidden="true"
@@ -1284,7 +1619,9 @@ export default function Dashboard() {
               {showWelcome && (
                 <div className="av-empty">
                   <div className="av-empty-logo">✦</div>
+
                   <h2>Miben segíthetek ma?</h2>
+
                   <p>
                     Váltsd az ötleteidet valódi
                     eredményekké az Aivora AI
@@ -1350,7 +1687,7 @@ export default function Dashboard() {
                   onChange={(e) =>
                     setMessage(e.target.value)
                   }
-                  placeholder="Írd ide a kérdésed..."
+                  placeholder="Kérdezz bármit az Aivorától..."
                   maxLength={2000}
                   rows={2}
                   disabled={sending || creating}
@@ -1383,7 +1720,7 @@ export default function Dashboard() {
               )}
 
               <div className="av-footnote">
-                Aivora AI · A válaszok ellenőrzése
+                Aivora AI · A válaszokat ellenőrizd
                 fontos üzleti döntések előtt.
               </div>
             </div>
