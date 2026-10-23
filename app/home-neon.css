@@ -1,0 +1,351 @@
+/* AIVORA AI — NEON PURPLE HOMEPAGE */
+
+.home.home {
+  --bg: #08050f;
+  --panel: #140b22;
+  --panel-light: #201031;
+  --border: #512b75;
+  --text: #f9f2ff;
+  --muted: #b5a3c8;
+  --purple: #b65cff;
+  --red: #d998ff;
+
+  background:
+    radial-gradient(ellipse at 50% 5%, #7024b331, transparent 42%),
+    radial-gradient(ellipse at 0% 65%, #7c21b015, transparent 40%),
+    #08050f;
+  color: #f9f2ff;
+}
+
+.home.home .home-nav {
+  position: relative;
+  z-index: 2;
+  border-bottom: 1px solid #522675;
+  background: #0d0718ed;
+  backdrop-filter: blur(18px);
+}
+
+.home.home .home-brand-icon {
+  background: linear-gradient(135deg, #c26bff, #6320a9);
+  box-shadow: 0 0 24px #a643ff85;
+}
+
+.home.home .home-brand-name span {
+  color: #d38aff;
+}
+
+.home.home .home-nav-links a {
+  color: #c6b3d8;
+}
+
+.home.home .home-nav-links a:hover {
+  color: #e8bbff;
+}
+
+.home.home .home-lang {
+  background: #190d28;
+  border-color: #512a70;
+  color: #d9c3ed;
+}
+
+.home.home .home-lang.active {
+  background: #532181;
+  border-color: #bd66ff;
+  box-shadow: 0 0 15px #a843ff40;
+  color: white;
+}
+
+.home.home .home-login {
+  color: #f1dfff;
+}
+
+.home.home .home-signup,
+.home.home .home-primary {
+  border: 1px solid #c17bff;
+  background: linear-gradient(125deg, #7722d6, #bc58ff);
+  color: #fff;
+  box-shadow: 0 0 24px #9b3bff58;
+}
+
+.home.home .home-signup:hover,
+.home.home .home-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px #ac48ff90;
+}
+
+.home.home .home-hero {
+  position: relative;
+  padding-top: 110px;
+}
+
+.home.home .home-eyebrow {
+  border-color: #8140b5;
+  background: #251037;
+  color: #e1b4ff;
+  box-shadow: 0 0 25px #9d3aff28;
+}
+
+.home.home .home-hero h1 {
+  color: #fff;
+  text-shadow: 0 0 55px #af4aff1c;
+}
+
+.home.home .home-gradient-text {
+  background: linear-gradient(90deg, #b65cff, #e3b3ff, #a44bff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 25px #a846ff45);
+}
+
+.home.home .home-hero-description {
+  color: #c1afcf;
+}
+
+.home.home .home-secondary {
+  border-color: #8344b2;
+  background: #1b0d2b;
+  color: #ead7ff;
+}
+
+.home.home .home-secondary:hover {
+  border-color: #c16aff;
+  background: #301343;
+}
+
+.home.home .home-hero-note {
+  color: #a18ab5;
+}
+
+/* AI CHAT ELŐNÉZET */
+
+.home.home .home-preview {
+  position: relative;
+  border: 1px solid #9347c9;
+  background: #10091b;
+  box-shadow:
+    0 0 30px #9639ff2c,
+    0 25px 85px #0008;
+}
+
+.home.home .home-preview-header {
+  border-bottom: 1px solid #51266e;
+  background: #1b0e2b;
+  color: #e9c9ff;
+}
+
+.home.home .home-preview-dot {
+  background: #b75cff;
+  box-shadow: 0 0 16px #bd5dff;
+}
+
+.home.home .home-preview-body {
+  background:
+    radial-gradient(circle at 50% 0%, #64219715, transparent 75%),
+    #10091b;
+}
+
+.home.home .home-preview-user {
+  border-color: #ad58ed;
+  background: linear-gradient(135deg, #7928c6, #4b147d);
+  box-shadow: 0 0 22px #9237ed25;
+}
+
+.home.home .home-preview-ai {
+  border-color: #573071;
+  background: #21112f;
+  color: #f4e8ff;
+}
+
+.home.home .home-preview-input {
+  border-color: #7940a5;
+  background: #1b0e2a;
+  color: #a992c0;
+}
+
+.home.home .home-preview-arrow {
+  color: #d389ff;
+}
+
+/* FUNKCIÓK */
+
+.home.home .home-section-kicker {
+  color: #d38aff;
+}
+
+.home.home .home-section-head h2 {
+  color: #fff;
+}
+
+.home.home .home-section-head p {
+  color: #b9a5ca;
+}
+
+.home.home .home-feature {
+  border: 1px solid #502771;
+  background: linear-gradient(145deg, #1e0e30, #10091c);
+  box-shadow: inset 0 1px #ffffff0a;
+}
+
+.home.home .home-feature:hover {
+  border-color: #bd65ff;
+  box-shadow: 0 0 30px #a63aff2d;
+  transform: translateY(-4px);
+}
+
+.home.home .home-feature-icon {
+  border: 1px solid #703899;
+  background: #32144e;
+  box-shadow: 0 0 18px #a43cff2b;
+}
+
+.home.home .home-feature h3 {
+  color: #f6eaff;
+}
+
+.home.home .home-feature p {
+  color: #b9a6ca;
+}
+
+/* HÁROM LÉPÉS */
+
+.home.home .home-step {
+  border-color: #512a72;
+  background: linear-gradient(150deg, #1b0d2a, #11091d);
+}
+
+.home.home .home-step-number {
+  color: #d18aff;
+  text-shadow: 0 0 20px #ae4bff70;
+}
+
+.home.home .home-step h3 {
+  color: #f5e8ff;
+}
+
+.home.home .home-step p {
+  color: #b8a5c8;
+}
+
+/* FREE / PRO CSOMAGOK */
+
+.home.home .home-plan {
+  border-color: #502a6e;
+  background: #170c25;
+}
+
+.home.home .home-plan.featured {
+  border-color: #b05aff;
+  background: linear-gradient(145deg, #2b1244, #170b27);
+  box-shadow: 0 0 40px #9c39ff38;
+}
+
+.home.home .home-plan-label {
+  color: #f2dcff;
+}
+
+.home.home .home-plan-price {
+  color: #fff;
+}
+
+.home.home .home-plan-price small {
+  color: #bda6cf;
+}
+
+.home.home .home-plan-description {
+  color: #b9a5c9;
+}
+
+.home.home .home-plan-list li {
+  color: #e5d3f1;
+}
+
+.home.home .home-plan-list li::before {
+  color: #ce7aff;
+}
+
+.home.home .home-plan-button {
+  border-color: #8742ba;
+  background: #2b1641;
+  color: #f4e5ff;
+}
+
+.home.home .home-plan.featured .home-plan-button {
+  border-color: #b86cff;
+  background: linear-gradient(120deg, #7522d4, #b751ff);
+  box-shadow: 0 0 23px #a33eff4d;
+}
+
+.home.home .home-plan-button:hover {
+  filter: brightness(1.18);
+}
+
+.home.home .home-pricing-note {
+  color: #ad96bd;
+}
+
+/* UTOLSÓ FELHÍVÁS */
+
+.home.home .home-cta {
+  border-color: #9951cc;
+  background:
+    radial-gradient(ellipse at 50% 0%, #772db04a, transparent 75%),
+    #170b26;
+  box-shadow: 0 0 55px #8c31df22;
+}
+
+.home.home .home-cta h2 {
+  color: #fff;
+}
+
+.home.home .home-cta p {
+  color: #c0add0;
+}
+
+/* LÁBLÉC */
+
+.home.home .home-footer {
+  border-top-color: #452262;
+  background: #090511;
+}
+
+.home.home .home-footer p {
+  color: #a28bb6;
+}
+
+.home.home .home-footer-links a {
+  color: #cbb2df;
+}
+
+.home.home .home-footer-links a:hover {
+  color: #e3a9ff;
+}
+
+/* MOBIL FINOMÍTÁSOK */
+
+@media (max-width: 700px) {
+  .home.home .home-hero {
+    padding-top: 75px;
+  }
+
+  .home.home .home-preview {
+    box-shadow: 0 0 24px #923aff2a;
+  }
+
+  .home.home .home-feature,
+  .home.home .home-step,
+  .home.home .home-plan {
+    border-radius: 17px;
+  }
+
+  .home.home .home-nav-actions {
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home.home .home-primary,
+  .home.home .home-feature {
+    transition: none;
+  }
+}

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import "./home-neon.css";
 
 const content = {
   hu: {
