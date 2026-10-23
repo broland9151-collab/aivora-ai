@@ -1,18 +1,20 @@
-import Stripe from "stripe";
+ import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+
 
 export async function POST(request) {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!stripeKey?.startsWith("sk_test_") || !webhookSecret) {
+    console.error("Hiányzó Stripe tesztbeállítás.");
+
     return Response.json(
-      { error: "Hiányzó Stripe-beállítás." },
+      { error: "Stripe-beállítási hiba." },
       { status: 500 }
     );
   }
 
-  const stripe = new Stripe(stripeKey);
   const signature = request.headers.get("stripe-signature");
 
   if (!signature) {
@@ -22,6 +24,8 @@ export async function POST(request) {
     );
   }
 
+  const stripe = new Stripe(stripeKey);
+
   let event;
 
   try {
@@ -30,7 +34,9 @@ export async function POST(request) {
       signature,
       webhookSecret
     );
-  } catch {
+  } catch (error) {
+    console.error("Érvénytelen webhook aláírás:", error.message);
+
     return Response.json(
       { error: "Érvénytelen Stripe aláírás." },
       { status: 400 }
@@ -38,19 +44,36 @@ export async function POST(request) {
   }
 
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error("Hiányzó Supabase szerverbeállítás.");
+    }
+
     const admin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY,
-      { auth: { persistSession: false } }
+      supabaseUrl,
+      serviceRoleKey,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      }
     );
 
-    // Az előfizetés állapotának szinkronizálása
-    async function syncSubscription(subscription) {
+    function getId(value) {
+      if (typeof value === "string") return value;
+      return value?.id || null;
+    }
+
+    function isActive(subscription) {
+      return subscription.status === "active";
+    }
+
+    async function updateSubscription(subscription) {
       const subscriptionId = subscription.id;
-      const customerId =
-        typeof subscription.customer === "string"
-          ? subscription.customer
-          : subscription.customer?.id;
+      const customerId = getId(subscription.customer);
 
       const { data: existing, error: lookupError } =
         await admin
@@ -63,15 +86,15 @@ export async function POST(request) {
 
       if (!existing) {
         console.log(
-          "Még nem társított előfizetés:",
+          "Még nem társított Stripe-előfizetés:",
           subscriptionId
         );
         return;
       }
 
-      const active = subscription.status === "active";
+      const active = isActive(subscription);
 
-      const { error } = await admin
+      const { error: updateError } = await admin
         .from("user_subscriptions")
         .update({
           plan: active ? "pro" : "free",
@@ -82,7 +105,7 @@ export async function POST(request) {
         .eq("user_id", existing.user_id)
         .eq("stripe_subscription_id", subscriptionId);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
     }
 
     if (event.type === "checkout.session.completed") {
@@ -93,70 +116,123 @@ export async function POST(request) {
         session.client_reference_id &&
         session.subscription
       ) {
-        const subscriptionId =
-          typeof session.subscription === "string"
-            ? session.subscription
-            : session.subscription.id;
+        const userId = session.client_reference_id;
+        const subscriptionId = getId(session.subscription);
 
         const subscription =
           await stripe.subscriptions.retrieve(subscriptionId);
 
-        const active = subscription.status === "active";
+        const customerId = getId(subscription.customer);
 
-        const { error } = await admin
+        if (
+          getId(session.customer) &&
+          getId(session.customer) !== customerId
+        ) {
+          throw new Error("Stripe ügyfélazonosító eltérés.");
+        }
+
+        const active = isActive(subscription);
+
+        const { data: current, error: currentError } =
+          await admin
+            .from("user_subscriptions")
+            .select("stripe_subscription_id")
+            .eq("user_id", userId)
+            .maybeSingle();
+
+        if (currentError) throw currentError;
+
+        if (
+          current?.stripe_subscription_id &&
+          current.stripe_subscription_id !== subscriptionId
+        ) {
+          const oldSubscription =
+            await stripe.subscriptions.retrieve(
+              current.stripe_subscription_id
+            );
+
+          if (
+            ["active", "trialing", "past_due"].includes(
+              oldSubscription.status
+            )
+          ) {
+            console.error(
+              "Több előfizetés ugyanahhoz a felhasználóhoz:",
+              userId
+            );
+
+            throw new Error(
+              "Meglévő előfizetés miatt manuális ellenőrzés szükséges."
+            );
+          }
+        }
+
+        const { error: saveError } = await admin
           .from("user_subscriptions")
           .upsert(
             {
-              user_id: session.client_reference_id,
+              user_id: userId,
               plan: active ? "pro" : "free",
               status: active ? "active" : "inactive",
-              stripe_customer_id:
-                typeof session.customer === "string"
-                  ? session.customer
-                  : session.customer?.id,
+              stripe_customer_id: customerId,
               stripe_subscription_id: subscriptionId,
               updated_at: new Date().toISOString(),
             },
             { onConflict: "user_id" }
           );
 
-        if (error) throw error;
+        if (saveError) throw saveError;
       }
     }
 
     if (
-      [
-        "customer.subscription.created",
-        "customer.subscription.updated",
-        "customer.subscription.deleted",
-        "invoice.paid",
-        "invoice.payment_failed",
-      ].includes(event.type)
+      event.type === "customer.subscription.created" ||
+      event.type === "customer.subscription.updated" ||
+      event.type === "customer.subscription.deleted"
     ) {
-      let subscriptionId;
+      const subscription = event.data.object;
 
-      if (event.type.startsWith("customer.subscription.")) {
-        subscriptionId = event.data.object.id;
+      // A törölt előfizetés adatait közvetlenül
+      // a hitelesített Stripe eseményből kezeljük.
+      if (event.type === "customer.subscription.deleted") {
+        await updateSubscription({
+          ...subscription,
+          status: "canceled",
+        });
       } else {
-        const invoice = event.data.object;
-        subscriptionId =
-          invoice.parent?.subscription_details?.subscription ??
-          invoice.subscription;
-      }
+        // A legfrissebb állapotot kérjük le a Stripe-tól.
+        const latest = await stripe.subscriptions.retrieve(
+          subscription.id
+        );
 
-      if (typeof subscriptionId === "string") {
-        const subscription =
-          await stripe.subscriptions.retrieve(subscriptionId);
-
-        await syncSubscription(subscription);
+        await updateSubscription(latest);
       }
     }
 
-    console.log("Stripe esemény feldolgozva:", event.type);
+    if (
+      event.type === "invoice.paid" ||
+      event.type === "invoice.payment_failed"
+    ) {
+      const invoice = event.data.object;
+
+      const subscriptionId = getId(
+        invoice.parent?.subscription_details?.subscription ??
+        invoice.subscription
+      );
+
+      if (subscriptionId) {
+        const subscription =
+          await stripe.subscriptions.retrieve(subscriptionId);
+
+        await updateSubscription(subscription);
+      }
+    }
+
+    console.log("Stripe webhook feldolgozva:", event.type);
 
     return Response.json({ received: true });
   } catch (error) {
-    console.error("Stripe webhook hiba:", error);
+    console.error("Stripe webhook feldolgozási hiba:", error);
 
     return Response.json(
       { error: "Webhook feldolgozási hiba." },
